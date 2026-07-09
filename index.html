@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小步助手">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#f4efe5">
+  <meta name="application-name" content="小步助手">
+  <meta name="description" content="适合小学低年级孩子的低屏学习与情绪辅助小程序">
+  <title>小步学习助手</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <button id="homeBtn" class="icon-button hidden" type="button" aria-label="回到首页">首页</button>
+    <div>
+      <p class="eyebrow">低屏学习与情绪辅助</p>
+      <h1 id="pageTitle">小步助手</h1>
+    </div>
+    <label class="date-picker">
+      日期
+      <input id="dateInput" type="date">
+    </label>
+  </header>
+
+  <main>
+    <section id="homeView" class="view active">
+      <div class="home-card">
+        <p class="warm-line">不用一次做完。先找到下一小步。</p>
+        <div class="home-grid">
+          <button class="home-button" data-view="stuckView" type="button">我现在卡住了</button>
+          <button class="home-button" data-view="taskView" type="button">开始一个小任务</button>
+          <button class="home-button" data-view="readingView" type="button">今日阅读</button>
+          <button class="home-button" data-view="reviewView" type="button">晚上复盘</button>
+        </div>
+      </div>
+      <section class="panel rule-panel">
+        <div class="section-head">
+          <div>
+            <h2>规则变化预告</h2>
+            <p>提前看到变化，减少突然切换带来的压力。</p>
+          </div>
+          <button id="saveRuleBtn" type="button">保存预告</button>
+        </div>
+        <div class="form-grid">
+          <label>原来的规则是什么
+            <input id="oldRule" type="text" placeholder="例如：先阅读再运动">
+          </label>
+          <label>今天有什么变化
+            <input id="ruleChange" type="text" placeholder="例如：今天先运动再阅读">
+          </label>
+          <label>为什么要变化
+            <textarea id="ruleReason" rows="2" placeholder="例如：下午有活动"></textarea>
+          </label>
+          <label>变化后孩子需要做什么
+            <textarea id="ruleNeed" rows="2" placeholder="例如：先穿好鞋，运动后再读书"></textarea>
+          </label>
+          <label>孩子可以选择的两个方案
+            <div class="two-fields">
+              <input id="ruleChoiceA" type="text" placeholder="方案一：现在读10分钟">
+              <input id="ruleChoiceB" type="text" placeholder="方案二：晚饭后读15分钟">
+            </div>
+          </label>
+        </div>
+        <div class="generated-box">
+          <h3>给孩子看的说法</h3>
+          <p id="rulePreview">今天有一个小变化。你可以先看看，再选一个能做到的办法。</p>
+        </div>
+      </section>
+      <section class="panel card-panel">
+        <div class="section-head">
+          <div>
+            <h2>家长自定义情绪卡片</h2>
+            <p>默认卡片和自定义卡片会一起参与随机抽卡。</p>
+          </div>
+          <button id="drawCardBtn" type="button">随机抽卡</button>
+        </div>
+        <div class="card-draw">
+          <label>抽卡分类
+            <select id="drawCardCategory">
+              <option value="all">全部分类</option>
+              <option>冷静下来</option>
+              <option>开始任务</option>
+              <option>遇到挫折</option>
+              <option>需要帮助</option>
+            </select>
+          </label>
+          <div id="drawnCard" class="drawn-card">点“随机抽卡”，抽一张今天可以用的小卡片。</div>
+        </div>
+        <div class="form-grid card-form">
+          <label>卡片分类
+            <select id="customCardCategory">
+              <option>冷静下来</option>
+              <option>开始任务</option>
+              <option>遇到挫折</option>
+              <option>需要帮助</option>
+            </select>
+          </label>
+          <label>卡片内容
+            <textarea id="customCardText" rows="3" placeholder="例如：先把笔拿出来，放在第一题旁边。"></textarea>
+          </label>
+          <button id="saveCardBtn" type="button">新增卡片</button>
+        </div>
+        <div id="customCardList" class="card-list"></div>
+      </section>
+      <section class="panel parent-panel">
+        <div class="section-head">
+          <div>
+            <h2>家长记录</h2>
+            <p>记录卡住原因和有效帮助，不评价孩子好坏。</p>
+          </div>
+          <button id="saveParentBtn" type="button">保存</button>
+        </div>
+        <div class="form-grid">
+          <label>今天孩子在哪个任务卡住了
+            <input id="parentTask" type="text" placeholder="例如：数学口算、阅读、写作">
+          </label>
+          <label>主要卡住原因
+            <select id="parentReason">
+              <option value="">请选择</option>
+              <option>启动困难</option>
+              <option>情绪卡住</option>
+              <option>不会做</option>
+              <option>太累</option>
+            </select>
+          </label>
+          <label>哪种帮助有效
+            <textarea id="parentHelp" rows="3" placeholder="例如：读题、陪他写第一行、休息5分钟"></textarea>
+          </label>
+          <label>明天需要减少什么压力
+            <textarea id="parentReduce" rows="3"></textarea>
+          </label>
+          <label>明天需要提前说明什么规则
+            <textarea id="parentRule" rows="3"></textarea>
+          </label>
+        </div>
+      </section>
+      <section class="panel summary-panel">
+        <div class="section-head">
+          <div>
+            <h2>每日总结</h2>
+            <p>给家长看的客观记录。</p>
+          </div>
+          <button id="generateSummaryBtn" type="button">生成今日总结</button>
+        </div>
+        <textarea id="summaryOutput" rows="10" readonly></textarea>
+      </section>
+      <section class="panel sync-panel">
+        <div class="section-head">
+          <div>
+            <h2>数据备份</h2>
+            <p>导出或导入 JSON，在不同设备之间手动同步。</p>
+          </div>
+          <div class="button-row">
+            <button id="exportBtn" type="button">导出数据</button>
+            <button id="importBtn" class="soft-button" type="button">导入数据</button>
+            <input id="importFile" class="file-input" type="file" accept="application/json,.json">
+          </div>
+        </div>
+        <p id="syncStatus" class="muted">数据保存在当前浏览器本地。</p>
+      </section>
+    </section>
+
+    <section id="stuckView" class="view">
+      <div class="panel step-panel">
+        <div class="step-header">
+          <span id="stuckStepBadge">第 1 步</span>
+          <h2 id="stuckQuestion">现在是什么感觉？</h2>
+        </div>
+        <div id="stuckOptions" class="choice-grid"></div>
+        <div id="calmBox" class="calm-box hidden">
+          <p>现在不是解决所有问题的时候，我们先让身体安静一点。</p>
+          <div class="choice-grid small">
+            <button class="calm-choice" type="button" data-calm="呼吸3次">呼吸3次</button>
+            <button class="calm-choice" type="button" data-calm="喝一口水">喝一口水</button>
+            <button class="calm-choice" type="button" data-calm="休息5分钟">休息5分钟</button>
+          </div>
+          <strong id="nextSmallStep" class="next-line hidden">现在只做下一小步。</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="taskView" class="view">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>开始一个小任务</h2>
+            <p>把任务变成清楚的小步骤。</p>
+          </div>
+          <button id="saveTaskBtn" type="button">保存任务</button>
+        </div>
+        <label class="big-label">任务名称
+          <input id="taskName" type="text" placeholder="例如：阅读15分钟、数学口算、整理书包">
+        </label>
+        <div id="taskSteps" class="step-list"></div>
+        <div class="button-grid">
+          <button id="startTaskBtn" type="button">开始</button>
+          <button id="firstStepDoneBtn" class="soft-button" type="button">我完成了第一步</button>
+          <button id="taskHelpBtn" class="soft-button" type="button">我需要帮助</button>
+          <button id="taskBreakBtn" class="soft-button" type="button">我想休息5分钟</button>
+          <button id="finishTaskBtn" type="button">完成任务</button>
+        </div>
+        <p id="taskMessage" class="message-line">先拿出需要的东西。</p>
+      </div>
+      <div id="taskHistory" class="history-list"></div>
+    </section>
+
+    <section id="readingView" class="view">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>今日阅读</h2>
+            <p>只记录一点点，不写长作文。</p>
+          </div>
+          <button id="saveReadingBtn" type="button">保存阅读</button>
+        </div>
+        <div class="form-grid">
+          <label>今天读的书
+            <input id="bookTitle" type="text" placeholder="书名">
+          </label>
+          <label>读了几分钟
+            <input id="readingMinutes" type="number" min="0" inputmode="numeric" placeholder="15">
+          </label>
+          <label>我喜欢的人物
+            <input id="favoriteCharacter" type="text">
+          </label>
+          <label>我记住的一句话
+            <textarea id="rememberedLine" rows="3"></textarea>
+          </label>
+          <label>我给这本书几颗星
+            <select id="bookStars">
+              <option value="1">1 颗星</option>
+              <option value="2">2 颗星</option>
+              <option value="3">3 颗星</option>
+              <option value="4">4 颗星</option>
+              <option value="5" selected>5 颗星</option>
+            </select>
+          </label>
+          <label>我想画什么
+            <input id="drawIdea" type="text">
+          </label>
+        </div>
+        <div class="generated-box">
+          <h3>阅读记录</h3>
+          <p id="readingSentence">今天我读了《____》，我最喜欢____，因为____。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviewView" class="view">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>晚上复盘</h2>
+            <p>看见自己有办法，不做批评。</p>
+          </div>
+          <button id="saveReviewBtn" type="button">保存复盘</button>
+        </div>
+        <div class="form-grid">
+          <label>1. 今天我完成了什么？
+            <textarea id="reviewDone" rows="3"></textarea>
+          </label>
+          <label>2. 今天哪里有点难？
+            <textarea id="reviewHard" rows="3"></textarea>
+          </label>
+          <label>3. 我当时是什么感觉？
+            <input id="reviewFeeling" type="text">
+          </label>
+          <label>4. 后来我怎么出来的？
+            <textarea id="reviewCameOut" rows="3"></textarea>
+          </label>
+          <label>5. 明天我想先做哪一小步？
+            <textarea id="reviewTomorrow" rows="3"></textarea>
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
